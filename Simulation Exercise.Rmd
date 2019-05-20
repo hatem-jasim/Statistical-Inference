@@ -1,0 +1,88 @@
+---
+title: "Simulation Exercise"
+author: "Hatem Jasim Hatem"
+date: "May 13, 2019"
+output: pdf_document
+---
+```{r }
+library(ggplot2)
+```
+
+#Part 1: Simulation Exercise Instructions
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+##1. Show the sample mean and compare it to the theoretical mean of the distribution.
+
+
+```{r}
+n <- 40
+Lambda <- 0.2
+mns = NULL
+for (i in 1 : 1000) mns = c(mns, mean(rexp(n, Lambda)))
+SampleMean<- mean(mns)
+TheoreticalMean <- 1/Lambda
+paste('Sample Mean', SampleMean, 'Theoretical Mean', TheoreticalMean, sep = ': ')
+```
+***Sample mean `r SampleMean` approximately equal to theoretical mean `r TheoreticalMean`***
+
+```{r}
+hist(mns, xlab = "Mean", 
+     main="Distribution of Exponential Mean")
+abline(v = TheoreticalMean, col="red")
+abline(v = SampleMean, col="blue")
+legend("topright",c("Theoretical Mean", "Simulation Mean"),
+       cex=.8,col=c("red","blue"), pch=c('|','|'))
+```
+
+##2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+
+```{r}
+# sample deviation & variance form sample 
+sample_std <- sd(mns)
+sample_variance <- sample_std^2
+paste('sample stander deviation', sample_std, 'sample variance', 
+      sample_variance, sep = ': ')
+```
+Sample stander deviation can calculated theoretically accourding to  this formula: $S = \frac{\sigma}{\sqrt{n}}$ and sample variance accourding to this formula $variance= S^2$
+```{r}
+# theoretical deviation & variance form pupluation parapeter 
+theoretical_std <- (1/Lambda)/sqrt(n)
+theoretical_variance  <- theoretical_std^2
+paste('Theoretical stander deviation', theoretical_std, 
+      'Theoretical variance', theoretical_variance, sep = ': ')
+```
+
+***The simulation variance `r sample_variance` approximately equal to Theoretical variance `r theoretical_variance`***
+
+##3. Show that the distribution is approximately normal.
+
+```{}
+sample_CI<-round (mean(simulation_means)+c(-
+1,1)*1.96*sd(simulation_means)/sqrt(sample_size),2)
+print(sample_CI)
+## [1] 4.77 5.26
+Theoretical Confidence Interval
+theoretical_CI<- theoretical_mean + c(-1,1) * 1.96 *
+sqrt(theoretical_var)/sqrt(sample_size)
+print(theoretical_CI)
+
+```
+
+```{r}
+
+ds <- data.frame(mns)
+ggplot(ds, aes(x = mns)) +
+ geom_histogram(binwidth = .2, color="black", fill="gray" , aes(y=..density..))+
+            stat_function(fun=dnorm, args=list(mean=TheoreticalMean, sd=sd(mns)), 
+                          color="green", size =1) +
+            stat_density(geom = "line", color = "red", size =1)  +
+            labs(x="Mean", y= "Density")
+```
+***The above figure show that sample distribution curve is approximately similar to normal distribution curve.***
+
+For further explaint used Q-Q Normal Plot to compare between sample quantiles and theortical quantiles 
+```{r}
+qqnorm(mns, col = 'red')
+qqline(mns, col = "green")
+```

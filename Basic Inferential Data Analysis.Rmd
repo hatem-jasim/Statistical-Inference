@@ -1,0 +1,75 @@
+---
+title: "Basic Inferential Data Analysis"
+author: "Hatem Jasim Hatem"
+date: "May 13, 2019"
+output: pdf_document
+---
+```{r}
+library(ggplot2)
+```
+##1. Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r}
+data(ToothGrowth)
+str(ToothGrowth)
+head(ToothGrowth)
+tail(ToothGrowth)
+```
+##2. Provide a basic summary of the data.
+```{r}
+summary(ToothGrowth)
+
+ggplot(aes(x=supp, y=len), data=ToothGrowth) + geom_boxplot(aes(fill=supp))+ 
+        labs(x="Supplement", y= "Tooth length")
+```
+
+## 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+```{r}
+
+
+# Convert dose to a factor
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+
+# Plot tooth length vs. the dose amount, broken out by supplement 
+ggplot(aes(x=dose, y=len), data=ToothGrowth) + 
+  geom_boxplot(aes(fill=dose))+ 
+  facet_grid(~ supp)+
+  labs(x = "Dose Amount", y = "Tooth Length")
+```
+The figure show there are different in tooth growth. To determine the difference is significante or not used t-test
+
+```{r}
+ToothGrowth_sub <- subset(ToothGrowth, ToothGrowth$dose %in% c(1.0,0.5))
+# T-test for vitamine c when dose 1 or 0.5 mg
+t.test(len ~ dose, ToothGrowth_sub[ToothGrowth_sub$supp =='VC', ])$p.value
+# T-test for orange juice when dose 1 or 0.5 mg
+t.test(len ~ dose, ToothGrowth_sub[ToothGrowth_sub$supp =='OJ', ])$p.value
+ToothGrowth_sub <- subset(ToothGrowth, ToothGrowth$dose %in% c(2.0, 1.0))
+# T-test for vitamine c when dose 2 or 1 mg
+t.test(len ~ dose, ToothGrowth_sub[ToothGrowth_sub$supp =='VC', ])$p.value
+# T-test for orange juice when dose 2 or 1 mg
+t.test(len ~ dose, ToothGrowth_sub[ToothGrowth_sub$supp =='OJ', ])$p.value
+```
+
+```{r}
+# Plot tooth length vs. supplement  method broken out by the dose 
+ggplot(aes(x=supp, y=len), data=ToothGrowth) + 
+  geom_boxplot(aes(fill=supp))+ 
+  facet_grid(~ dose) + 
+  labs(x = "Supplement", y = "Tooth Length")
+```
+The figure show there are different in tooth growth. To determine the difference is significante or not used t-test
+
+```{r}
+# T-test for supplement when dose 0.5 mg
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == .5, ])$p.value
+
+# T-test for supplement when dose 1 mg
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == 1, ])$p.value
+
+# T-test for supplement when dose 2 mg
+t.test(len ~ supp, ToothGrowth[ToothGrowth$dose == 2, ])$p.value
+```
+## 4. State your conclusions and the assumptions needed for your conclusions.
+
+Because the alternative hypothesis $H_a$ is cost and may be dangerous therefore set alpha to 0.01 $\alpha = 0.01$. 
+According to p-value of T-test the orange juice (OJ) more effective on tooth growth than vitamine c (VC) when dose is 0.5 or 1 mg but simlar effective in vitamine c when dose 2 mg
