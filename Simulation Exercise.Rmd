@@ -57,17 +57,7 @@ paste('Theoretical stander deviation', theoretical_std,
 
 ##3. Show that the distribution is approximately normal.
 
-```{}
-sample_CI<-round (mean(simulation_means)+c(-
-1,1)*1.96*sd(simulation_means)/sqrt(sample_size),2)
-print(sample_CI)
-## [1] 4.77 5.26
-Theoretical Confidence Interval
-theoretical_CI<- theoretical_mean + c(-1,1) * 1.96 *
-sqrt(theoretical_var)/sqrt(sample_size)
-print(theoretical_CI)
 
-```
 
 ```{r}
 
